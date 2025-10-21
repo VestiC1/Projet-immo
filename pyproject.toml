@@ -10,5 +10,6 @@ dependencies = [
     "jupyterlab>=4.4.9",
     "missingno>=0.5.2",
     "pandas>=2.3.3",
+    "tinydb>=4.8.2",
     "uvicorn>=0.38.0",
 ]
