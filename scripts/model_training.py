@@ -5,7 +5,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.metrics import r2_score
-from pickle import dump
+from pickle import dump, load
 from datetime import datetime
 
 
@@ -23,6 +23,10 @@ def generate_train_test(X, y, test_size, random_state):
 def export_pipeline(pipe, pipe_path):
     with open(pipe_path, "wb") as f:
         dump(pipe, f)
+
+def load_pipeline(pipe_path):
+    with open(pipe_path, "rb") as f:
+        return load(f)
 
 def model_path(name):
     now=datetime.now().strftime("%Y%m%d-%Hh%Mm%S")
