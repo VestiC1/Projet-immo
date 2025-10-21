@@ -32,8 +32,6 @@ Si [Surface globale] = 0 a supprimer (vérifier le nombre de ligne avant)
 
 # Sélection des colonnes premier modele :
 
-'Date mutation'
-'Nature mutation'
 'Valeur fonciere'
 'Code postal'
 'Code departement'
@@ -46,9 +44,9 @@ Si [Surface globale] = 0 a supprimer (vérifier le nombre de ligne avant)
 
 # Sélection des colonnes
 
+Date mutation et Nature mutation a etudier
 ---------------------------A Supprimer?-----------------'No disposition'
-'Date mutation'
-'Nature mutation'
+
 'Valeur fonciere'
 'No voie'
 'B/T/Q'
