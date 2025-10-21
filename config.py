@@ -8,6 +8,9 @@ DATA_DIR = ROOT / "data"
 DATA_CLEAN = DATA_DIR / "clean"
 dvf_clean=DATA_CLEAN/"dvf.csv"
 
+# Model directory
+MODEL_DIR = ROOT / "model"
+
 # DVF file
 DVF = DATA_DIR / "valeursfoncieres-2025-s1.txt.zip"
 
