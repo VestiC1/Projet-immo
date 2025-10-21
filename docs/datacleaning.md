@@ -17,12 +17,32 @@ supprimer les doublons
 
 # Remplacer les NaN
 
+Pour les valeurs numérique :
+
 Nan  ==>  0.00
 
 # Creation de nouvelles colonnes
 
 [Surface globale] = somme de la surface carrez de tous les lots par ligne
+
+Si [Surface globale] = 0 a supprimer (vérifier le nombre de ligne avant)
+
 [Prix m2]         = division de la valeur fonciere par rapport a la [Surface globale]
+
+
+# Sélection des colonnes premier modele :
+
+'Date mutation'
+'Nature mutation'
+'Valeur fonciere'
+'Code postal'
+'Code departement'
+'Code commune'
+*Surface habitable*
+'Nombre pieces principales'
+'Surface reelle bati'
+'Surface terrain'
+
 
 # Sélection des colonnes
 
@@ -62,5 +82,5 @@ Nan  ==>  0.00
 'Nature culture speciale'
 'Surface terrain'
 
-*Surface globale*
+*Surface habitable*
 *Prix m2*
