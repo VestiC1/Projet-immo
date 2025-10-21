@@ -1,4 +1,4 @@
-from config import DVF, DATA_CLEAN
+from config import DVF, dvf_clean
 import pandas as pd
 
 
@@ -24,8 +24,8 @@ def clean_df(df):
 def main():
     df=load_df(DVF)
     df=clean_df(df)
-    data_clean=DATA_CLEAN/"dvf.csv"
-    save_df(df, data_clean)
+
+    save_df(df, dvf_clean)
 
 if __name__ == "__main__":
     main()
