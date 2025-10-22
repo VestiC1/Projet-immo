@@ -101,7 +101,7 @@ datasets/
 model/characterization/*.csv
 # If your trained model is model/my_model.pkl, allow it:
 # model/*
-# !model/my_model.pkl
+!model/*.onnx
 # OR specify exactly which models to include in your Dockerfile COPY
 
 # Cache directories
