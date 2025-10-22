@@ -206,5 +206,13 @@ marimo/_static/
 marimo/_lsp/
 __marimo__/
 
-#Dossier Data
+# Dossier Data
 data/*.zip
+data/clean/*.csv
+
+# Dossier Model
+model/*.pkl
+model/characterization/*.csv
+
+# Dossier mlruns
+mlruns/
