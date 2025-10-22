@@ -15,4 +15,5 @@ dependencies = [
     "python-multipart>=0.0.20",
     "tinydb>=4.8.2",
     "uvicorn>=0.38.0",
+    "mlflow>=3.5.0",
 ]
