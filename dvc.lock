@@ -1,7 +1,7 @@
 schema: '2.0'
 stages:
   clean:
-    cmd: python scripts/datacleaning.py
+    cmd: python -m scripts.datacleaning
     deps:
     - path: data/valeursfoncieres-2025-s1.txt.zip
       hash: md5
@@ -9,10 +9,10 @@ stages:
       size: 26392883
     - path: scripts/datacleaning.py
       hash: md5
-      md5: 3e7df4dbb1f215e71a121a7c02a80a3a
-      size: 1582
+      md5: 30dbc98f6df345c68c199b824a43218d
+      size: 1585
     outs:
     - path: data/clean/dvf.csv
       hash: md5
-      md5: 8047a527d0e08d9c0e46c30a8daeab10
-      size: 50112871
+      md5: 587f3b286a4eb8e2034e0c516574ac2c
+      size: 50144294

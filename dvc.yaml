@@ -1,7 +1,7 @@
 # dvc.yaml
 stages:
   clean:
-    cmd: python scripts/datacleaning.py
+    cmd: python -m scripts.datacleaning
     deps:
     - data/valeursfoncieres-2025-s1.txt.zip
     - scripts/datacleaning.py
