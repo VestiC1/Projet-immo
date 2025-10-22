@@ -6,18 +6,17 @@ COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 WORKDIR /app
 
 # Copy dependency files first
-COPY requirements.txt* pyproject.toml* uv.lock* ./
+COPY pyproject.toml uv.lock ./
 
 # Install dependencies directly to system Python (faster and simpler)
-RUN if [ -f requirements.txt ]; then \
-        uv pip install --system --no-cache -r requirements.txt; \
-    elif [ -f pyproject.toml ]; then \
-        uv pip install --system --no-cache .; \
-    fi
+RUN uv pip install --system --no-cache .
 
 # Copy application code
 COPY config.py ./
 COPY src/ ./src/
+
+# Copy model files
+COPY ./model/model.onnx ./model/model.onnx
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app

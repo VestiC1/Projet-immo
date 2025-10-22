@@ -212,6 +212,7 @@ data/clean/*.csv
 
 # Dossier Model
 model/*.pkl
+model/*.onnx
 model/characterization/*.csv
 
 # Dossier mlruns
