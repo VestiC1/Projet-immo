@@ -16,7 +16,7 @@ COPY config.py ./
 COPY src/ ./src/
 
 # Copy model files
-COPY ./model/model.onnx ./model/model.onnx
+COPY ./model/ ./model
 
 # Create non-root user
 RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
