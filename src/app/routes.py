@@ -2,11 +2,15 @@ from fastapi import APIRouter, HTTPException, Depends, Request, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
 from typing import Optional
-
+import onnxruntime as rt
+from config import DEPLOYED_MODEL_PATH
 from src.utils.geo import validate_and_geocode_address
-
+import numpy as np
 router = APIRouter()
 templates = Jinja2Templates(directory="src/app/templates")
+
+session = rt.InferenceSession(str(DEPLOYED_MODEL_PATH))
+input_names = session.get_inputs()
 
 @router.get("/", tags=["Home"], response_class=HTMLResponse)
 async def home(request: Request):
@@ -53,6 +57,17 @@ async def predict(
         'code_commune': geocode_data.get('citycode'),
         'address_type': geocode_data.get('type')
     }
+    xx = {
+    'Code_postal' :  np.array([[10200.0]]),
+    'Code_commune' :  np.array([[33.0]]).astype(np.int64),
+    'Surface_habitable' : np.array([[0.0]]),
+    'Nombre_pieces_principales' : np.array([[0.0]]),
+    'Surface_reelle_bati' : np.array([[0.0]]),
+    'Surface_terrain' : np.array([[217.0]])
+    }
+
+    prediction = session.run(None, xx)[0][0,0]
+    print(prediction)
     
     # TODO: Call your ML model
     # from your_model import predict_price
@@ -79,7 +94,7 @@ async def predict(
             "commune": geocode_data.get('citycode')
         },
         "estimation": {
-            "price": estimated_price,
+            "price": prediction,
             "price_per_m2": int(estimated_price / surface_habitable),
             "confidence_interval": {
                 "min": estimated_price - confidence_margin,
