@@ -1,8 +1,12 @@
 from pathlib import Path
+import sys
+
 
 
 # Projecty root directory
 ROOT = Path(__file__).parent
+
+#sys.path.append(str(ROOT))
 
 # Data directory
 DATA_DIR = ROOT / "data"
