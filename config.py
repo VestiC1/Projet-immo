@@ -1,5 +1,6 @@
 from pathlib import Path
 
+
 # Projecty root directory
 ROOT = Path(__file__).parent
 
@@ -22,3 +23,4 @@ API_CONFIG = {
     "host": "localhost",
     "port": 8222
 }
+
