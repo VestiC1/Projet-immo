@@ -10,6 +10,7 @@ dvf_clean=DATA_CLEAN/"dvf.csv"
 
 # Model directory
 MODEL_DIR = ROOT / "model"
+MODEL_CHARAC = MODEL_DIR / "characterization"
 
 # DVF file
 DVF = DATA_DIR / "valeursfoncieres-2025-s1.txt.zip"
