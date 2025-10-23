@@ -16,6 +16,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import KFold, cross_val_score
 from sklearn.datasets import make_regression
 from sklearn.metrics import make_scorer, mean_squared_error
+from xgboost import XGBRegressor
 
 def load_df(data_path):
     return pd.read_csv(data_path, low_memory=False)
@@ -45,20 +46,21 @@ def objective(trial, X, y):
     params = {
         'n_estimators': trial.suggest_int('n_estimators', 80, 200),
         'max_depth': trial.suggest_int('max_depth', 3, 10),
-        'min_samples_split': trial.suggest_int('min_samples_split', 2, 10),
-        'min_samples_leaf': trial.suggest_int('min_samples_leaf', 1, 10),
-        #'max_features': trial.suggest_categorical('max_features', ['sqrt', 'log2', None]),
-        #'bootstrap': trial.suggest_categorical('bootstrap', [True, False]),
+        'learning_rate': trial.suggest_float('learning_rate', 0.01, 0.3, log=True),
+        'subsample': trial.suggest_float('subsample', 0.7, 1.0),
+        'colsample_bytree': trial.suggest_float('colsample_bytree', 0.7, 1.0),
+        'gamma': trial.suggest_float('gamma', 0, 5),
+        'min_child_weight': trial.suggest_int('min_child_weight', 1, 10),
     }
 
     # Initialiser le modèle
     pipe = Pipeline([
-            ('scaler', StandardScaler()),
-            ('rf', RandomForestRegressor(**params))
-        ])
+        ('scaler', StandardScaler()),
+        ('xg', XGBRegressor(**params, objective='reg:squarederror', random_state=42))
+    ])
 
     # Définir la validation croisée (k-fold)
-    kf = KFold(n_splits=2, shuffle=True, random_state=42)
+    kf = KFold(n_splits=5, shuffle=True, random_state=42)
 
     # Utiliser le score RMSE (Root Mean Squared Error) comme métrique
     scorer = make_scorer(mean_squared_error, greater_is_better=False)
@@ -99,12 +101,12 @@ def main():
     # === ÉTAPE 4 : Démarrage du run MLflow ===
     print("\n=== Démarrage de l'entraînement avec MLflow ===")
     
-    with mlflow.start_run(run_name=f"RandomForest_{datetime.now().strftime('%Y%m%d_%H%M%S')}") as run:
+    with mlflow.start_run(run_name=f"xgboost_{datetime.now().strftime('%Y%m%d_%H%M%S')}") as run:
         
         # Log des tags pour identifier le run
         mlflow.set_tags({
-            "model_type": "RandomForestRegressor",
-            "pipeline": "StandardScaler + RandomForest",
+            "model_type": "xgboost",
+            "pipeline": "StandardScaler + xgboost",
             "data_source": "DVF",
             "author": "Votre nom"
         })
@@ -120,7 +122,7 @@ def main():
         
         # === ÉTAPE 5 : Création et entraînement du pipeline (avec Optuna) ===
         
-        pipe_path = model_path(MODEL_DIR, 'rf', 'pkl')
+        pipe_path = model_path(MODEL_DIR, 'xg', 'pkl')
 
         # Créer une étude Optuna
         study = optuna.create_study(direction='minimize')
@@ -133,7 +135,7 @@ def main():
 
         pipe = Pipeline([
             ('scaler', StandardScaler()),
-            ('rf', RandomForestRegressor(**study.best_params))
+            ('xg', XGBRegressor(**study.best_params, objective='reg:squarederror', random_state=42))
         ])
 
         # Entraîner le modèle final avec les meilleurs paramètres
@@ -199,7 +201,7 @@ def main():
             artifact_path="model",  # Chemin dans le run MLflow
             signature=signature,
             input_example=X_train.iloc[:5],  # Exemple d'entrée pour la documentation
-            registered_model_name="DVF_RandomForest_Production",  # Nom dans le model registry
+            registered_model_name="DVF_xgboost_Production",  # Nom dans le model registry
             metadata={
                 "features": list(X_train.columns),
                 "target": "Valeur fonciere"
@@ -210,7 +212,7 @@ def main():
         # Sauvegarde de la liste des features
         feature_importance = pd.DataFrame({
             'feature': X_train.columns,
-            'importance': pipe.named_steps['rf'].feature_importances_
+            'importance': pipe.named_steps['xg'].feature_importances_
         }).sort_values('importance', ascending=False)
         
         feature_importance_path = model_path(MODEL_CHARAC, "feature_importance", "csv")
