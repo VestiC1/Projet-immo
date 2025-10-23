@@ -1,4 +1,3 @@
-# dvc.yaml
 stages:
   clean:
     cmd: python -m scripts.datacleaning
