@@ -208,6 +208,7 @@ __marimo__/
 
 # Dossier Data
 data/*.zip
+data/*.csv
 data/clean/*.csv
 
 # Dossier Model

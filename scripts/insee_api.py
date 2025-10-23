@@ -67,7 +67,8 @@ class DensitePopulation:
                 geocode_data['latitude'],
                 geocode_data['longitude']
             )
-        
+            latitude = geocode_data['latitude']
+            longitude = geocode_data['longitude']
         # Sinon commune
         if not data:
             data = self._get_data(geocode_data['citycode'])
@@ -80,8 +81,35 @@ class DensitePopulation:
             return 0
         
         # La surface est déjà en hectares, donc diviser par 100 pour avoir des km²
-        return round(population / (surface / 100), 2)
+        return round(population / (surface / 100), 2), latitude, longitude
 
+def validate_and_geocode_address(address: str) -> tuple[bool, Optional[dict]]:
+        if not address or len(address) < 5:
+            return False, None
+        
+        try:
+            response = requests.get(
+                "https://api-adresse.data.gouv.fr/search/",
+                params={'q': address, 'limit': 1},
+                timeout=5
+            )
+            response.raise_for_status()
+            data = response.json()
+            
+            if not data.get('features'):
+                return False, None
+            
+            feature = data['features'][0]
+            geocode_data = {
+                'latitude': feature['geometry']['coordinates'][1],
+                'longitude': feature['geometry']['coordinates'][0],
+                'citycode': feature['properties'].get('citycode'),
+                'score': feature['properties'].get('score', 0)
+            }
+            
+            return geocode_data['score'] >= 0.5, geocode_data
+        except:
+            return False, None
 
 # Utilisation
 if __name__ == "__main__":
@@ -123,11 +151,12 @@ if __name__ == "__main__":
         "Tour Eiffel, 75007 Paris",
         "Place Bellecour, 69002 Lyon",
         "amboise, 37400",
-        "Saint-Paterne-Racan, 37370"
+        "Saint-Paterne-Racan, 37370",
+        "37000"
     ]
     
     for addr in addresses:
         is_valid, geocode = validate_and_geocode_address(addr)
         if is_valid:
-            densite = densite_api.get_densite(geocode)
-            print(f"{addr}: {densite:,.0f} hab/km²")
+            densite, latitude, longitude = densite_api.get_densite(geocode)
+            print(f"{addr}: {densite:,.0f} hab/km², {latitude}, {longitude}")
