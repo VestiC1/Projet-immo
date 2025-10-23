@@ -9,10 +9,10 @@ stages:
       size: 26392883
     - path: scripts/datacleaning.py
       hash: md5
-      md5: 30dbc98f6df345c68c199b824a43218d
-      size: 1585
+      md5: 415d2d75c96d6bfd6d25c3bddf51588a
+      size: 1495
     outs:
     - path: data/clean/dvf.csv
       hash: md5
-      md5: 587f3b286a4eb8e2034e0c516574ac2c
-      size: 50144294
+      md5: 8047a527d0e08d9c0e46c30a8daeab10
+      size: 50112871
