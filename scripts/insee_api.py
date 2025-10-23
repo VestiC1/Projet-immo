@@ -121,7 +121,9 @@ if __name__ == "__main__":
     addresses = [
         "10 Place Jean Jaurès, 37000 Tours",
         "Tour Eiffel, 75007 Paris",
-        "Place Bellecour, 69002 Lyon"
+        "Place Bellecour, 69002 Lyon",
+        "amboise, 37400",
+        "Saint-Paterne-Racan, 37370"
     ]
     
     for addr in addresses:
