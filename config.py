@@ -1,6 +1,7 @@
 from pathlib import Path
 
 
+
 # Projecty root directory
 ROOT = Path(__file__).parent
 
