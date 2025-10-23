@@ -92,15 +92,15 @@ predictions = model.predict(X_new)
 - ✅ **Collaboration** : Partagez facilement vos résultats avec l'équipe
 - ✅ **Versionning** : Gérez plusieurs versions de modèles en production
 
-## 📝 Différences avec votre code original
+## 📝 Avec MLflow
 
-| Aspect | Avant | Avec MLflow |
-|--------|-------|-------------|
-| Sauvegarde modèle | Fichier .pkl local uniquement | .pkl local + MLflow tracking |
-| Métriques | Affichées dans la console | Stockées et comparables dans MLflow UI |
-| Hyperparamètres | Non sauvegardés | Automatiquement loggés |
-| Historique | Aucun | Tous les runs sont conservés |
-| Comparaison | Manuelle | Interface graphique interactive |
+| Aspect | Avec MLflow |
+|--------|-------------|
+| Sauvegarde modèle | .pkl local + MLflow tracking |
+| Métriques | Stockées et comparables dans MLflow UI |
+| Hyperparamètres | Automatiquement loggés |
+| Historique | Tous les runs sont conservés |
+| Comparaison | Interface graphique interactive |
 
 ## 🔧 Personnalisation
 
