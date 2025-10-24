@@ -214,6 +214,6 @@ data/clean/*.csv
 model/*.pkl
 model/*.onnx
 model/characterization/*.csv
-
+!model/deploy/*.pkl
 # Dossier mlruns
 mlruns/
