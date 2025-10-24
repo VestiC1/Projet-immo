@@ -6,11 +6,17 @@ import onnxruntime as rt
 from config import DEPLOYED_MODEL_PATH
 from src.utils.geo import validate_and_geocode_address
 import numpy as np
+import pandas as pd
+import pickle
 router = APIRouter()
 templates = Jinja2Templates(directory="src/app/templates")
 
-session = rt.InferenceSession(str(DEPLOYED_MODEL_PATH))
-input_names = session.get_inputs()
+#session = rt.InferenceSession(str(DEPLOYED_MODEL_PATH))
+#input_names = session.get_inputs()
+
+with open("model/deploy/best_model3.pkl", "rb") as f:
+    pipeline = pickle.load(f)
+
 
 @router.get("/", tags=["Home"], response_class=HTMLResponse)
 async def home(request: Request):
@@ -47,36 +53,25 @@ async def predict(
     
     # Prepare for ML model
     model_input = {
-        'type_local': type_local,
-        'address': validated_address,
-        'latitude': validated_lat,
-        'longitude': validated_lon,
-        'surface_habitable': surface_habitable,
-        'nombre_pieces': nombre_pieces,
-        'surface_terrain': surface_terrain,
-        'code_commune': geocode_data.get('citycode'),
-        'address_type': geocode_data.get('type')
-    }
-    xx = {
-    'Code_postal' :  np.array([[10200.0]]),
-    'Code_commune' :  np.array([[33.0]]).astype(np.int64),
-    'Surface_habitable' : np.array([[0.0]]),
-    'Nombre_pieces_principales' : np.array([[0.0]]),
-    'Surface_reelle_bati' : np.array([[0.0]]),
-    'Surface_terrain' : np.array([[217.0]])
+        'Type local': [type_local.title()],
+        'latitude': [validated_lat],
+        'longitude': [validated_lon],
+        'Surface habitable': [surface_habitable],
+        'Nombre pieces principales': [nombre_pieces],
+        'Surface terrain': [surface_terrain],
+        'Type de voie': ['RUE'],
+        'densite': [1200]
     }
 
-    prediction = session.run(None, xx)[0][0,0]
+    prediction = np.exp(pipeline.predict(pd.DataFrame(model_input, index=[0]))[0])
     print(prediction)
     
     # TODO: Call your ML model
     # from your_model import predict_price
     # prediction = predict_price(model_input)
     
-    # Mock prediction
-    base_price = 6000 * surface_habitable
-    estimated_price = int(base_price)
-    confidence_margin = int(base_price * 0.05)
+
+    confidence_margin = int(prediction * 0.05)
     
     # Prepare template context
     context = {
@@ -95,10 +90,10 @@ async def predict(
         },
         "estimation": {
             "price": prediction,
-            "price_per_m2": int(estimated_price / surface_habitable),
+            "price_per_m2": int(prediction / surface_habitable),
             "confidence_interval": {
-                "min": estimated_price - confidence_margin,
-                "max": estimated_price + confidence_margin
+                "min": prediction - confidence_margin,
+                "max": prediction + confidence_margin
             },
             "confidence_level": "high" if geocode_data.get('type') == "housenumber" else "medium"
         },
