@@ -28,11 +28,17 @@
         name: grp2-projet-immo
         state: absent
 
-    - name: Tirer la dernière image
+    - name: Pull la dernière image
       community.docker.docker_image:
         name: ghcr.io/vestic1/projet-immo:latest
         source: pull
         force_source: yes  # Force le téléchargement même si l'image existe
+
+    - name: Remove dangling images
+      community.docker.docker_prune:
+        images: true
+        images_filters:
+          dangling: true
 
     - name: Lancer un nouveau conteneur
       community.docker.docker_container:
