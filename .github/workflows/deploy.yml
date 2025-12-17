@@ -39,3 +39,15 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Deploiement Ansible 
+        uses: dawidd6/action-ansible-playbook@v2
+        env:
+          GHCR_TOKEN: ${{ secrets.GH_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+        with:
+          playbook: deploy.yml
+          inventory: |
+            [servers]
+            ${{ secrets.HOST }} ansible_user=${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
