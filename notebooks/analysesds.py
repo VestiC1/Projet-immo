@@ -6,6 +6,12 @@ app = marimo.App()
 
 @app.cell
 def _():
+    import marimo as mo
+    return (mo,)
+
+
+@app.cell
+def _():
     import pandas as pd
     import zipfile
     import missingno as msno
@@ -140,18 +146,5 @@ def _(df_new_2):
     return
 
 
-@app.cell
-def _(df_new_2):
-    df_new_2['Nature mutation'].value_counts()
-    return
-
-
-@app.cell
-def _():
-    import marimo as mo
-    return (mo,)
-
-
 if __name__ == "__main__":
     app.run()
-
