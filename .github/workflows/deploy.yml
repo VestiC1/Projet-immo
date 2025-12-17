@@ -46,7 +46,7 @@ jobs:
           GHCR_TOKEN: ${{ secrets.GH_TOKEN }}
           GHCR_USER: ${{ github.actor }}
         with:
-          playbook: deploy.yml
+          playbook: ansible_playbook.yml
           inventory: |
             [servers]
             ${{ secrets.HOST }} ansible_user=${{ secrets.USER }}
