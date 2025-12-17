@@ -30,14 +30,14 @@
 
     - name: Tirer la dernière image
       community.docker.docker_image:
-        name: ghcr.io/vestic1/projet-immo:main
+        name: ghcr.io/vestic1/projet-immo:latest
         source: pull
         force_source: yes  # Force le téléchargement même si l'image existe
 
     - name: Lancer un nouveau conteneur
       community.docker.docker_container:
         name: grp2-projet-immo
-        image: ghcr.io/vestic1/projet-immo:main
+        image: ghcr.io/vestic1/projet-immo:latest
         ports: "5002:8000"
         state: started
         restart_policy: unless-stopped
