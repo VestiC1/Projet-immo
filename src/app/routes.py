@@ -25,6 +25,10 @@ with open("model/deploy/best_model3.pkl", "rb") as f:
 async def home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
+@router.get("/healthcheck", tags=["Health"], response_class=JSONResponse)
+async def home(request: Request):
+    return {'status' : 'OK'}
+
 @router.post("/predict", tags=["Prediction"])
 async def predict(
     request : Request,
