@@ -12,3 +12,14 @@ def setup_prometheus(app):
     """
     Instrumentator().instrument(app).expose(app, endpoint="/metrics")
     print("✅ Prometheus metrics enabled at /metrics")
+
+# Créer métrique histogram pour latence
+inference_time_histogram = Histogram(
+    'inference_time_ms',
+    'Temps d\'inférence en ms'
+)
+
+# Fonction : Track inference time
+def track_inference_time(inference_time_ms: float):
+    """Enregistre le temps d'inférence"""
+    inference_time_histogram.observe(inference_time_ms)

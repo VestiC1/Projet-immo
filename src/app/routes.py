@@ -8,6 +8,9 @@ from src.utils.geo import validate_and_geocode_address
 import numpy as np
 import pandas as pd
 import pickle
+from src.app.monitoring.prometheus_metrics import track_inference_time
+import time
+
 router = APIRouter()
 templates = Jinja2Templates(directory="src/app/templates")
 
@@ -62,8 +65,10 @@ async def predict(
         'Type de voie': ['RUE'],
         'densite': [1200]
     }
-
+    inference_start=time.time()
     prediction = np.exp(pipeline.predict(pd.DataFrame(model_input, index=[0]))[0])
+    inference_time=time.time()-inference_start
+    track_inference_time(inference_time*1000)
     print(prediction)
     
     # TODO: Call your ML model
