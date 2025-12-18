@@ -47,3 +47,5 @@
         ports: "5002:8000"
         state: started
         restart_policy: unless-stopped
+        networks:
+          - name: p4_network
