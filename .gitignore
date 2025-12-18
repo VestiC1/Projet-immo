@@ -217,3 +217,5 @@ model/characterization/*.csv
 !model/deploy/*.pkl
 # Dossier mlruns
 mlruns/
+data/clean/*
+temp*
