@@ -1,9 +1,12 @@
-from multiprocessing import Process, Queue
+from multiprocessing import Process
 from .producer import Producer
-from .threadpool import ThreadPool
-import time
+from .consumer import run_consumer
+from .ipc_queue import create_ipc_queue
 from config import DVF, dvf_clean
 import pandas as pd
+
+from typing import Optional, Tuple
+import httpx
 
 n_thread = 5
 
@@ -32,10 +35,68 @@ def generate_data(queue):
         queue.put(None)
 
 
+async def validate_and_geocode_address(address: str) -> Tuple[bool, Optional[dict]]:
+    if not address or len(address) < 5:
+        return False, None
+
+    try:
+        async with httpx.AsyncClient(timeout=5.0) as client:
+            response = await client.get(
+                "https://api-adresse.data.gouv.fr/search/",
+                params={"q": address, "limit": 1},
+            )
+            response.raise_for_status()
+
+        data = response.json()
+
+        if not data.get("features"):
+            return False, None
+
+        feature = data["features"][0]
+        geocode_data = {
+            "latitude": feature["geometry"]["coordinates"][1],
+            "longitude": feature["geometry"]["coordinates"][0],
+            "citycode": feature["properties"].get("citycode"),
+            "score": feature["properties"].get("score", 0),
+        }
+
+        return geocode_data["score"] >= 0.5, geocode_data
+
+    except httpx.HTTPError:
+        return False, None
+    except Exception:
+        return False, None
+
+
 # Worker processing function
 def process_data(item, pid):
-    with open(f"output{pid}.txt", "a") as f:
-        f.write(f"Produced: {item}\n")
+    """
+    Fonction exécutée par chaque thread du ThreadPool.
+    Elle reçoit une adresse (item) depuis la Queue et lance la
+    vérification / géocodage, puis écrit un résultat dans un fichier.
+    """
+    import asyncio
+
+    try:
+        is_valid, geocode_data = asyncio.run(validate_and_geocode_address(item))
+    except Exception as e:
+        is_valid, geocode_data = False, None
+        error = str(e)
+    else:
+        error = ""
+
+    with open(f"output{pid}.txt", "a", encoding="utf-8") as f:
+        if is_valid and geocode_data:
+            f.write(
+                f"[worker {pid}] OK   | {item} "
+                f"| lat={geocode_data['latitude']}, lon={geocode_data['longitude']}, "
+                f"citycode={geocode_data['citycode']}, score={geocode_data['score']}\n"
+            )
+        else:
+            f.write(
+                f"[worker {pid}] FAIL | {item} "
+                f"| geocoding invalide ou erreur: {error}\n"
+            )
 
 
 # Producer process
@@ -45,18 +106,11 @@ def process_producer(queue):
     producer.stop()
 
 
-# Consumer process
-def process_consumer(queue):
-    global n_thread
-    pool = ThreadPool(n_thread, queue, process_data)
-    #pool.shutdown()
-
-
 # Main launcher
 def main():
-    ipc_queue = Queue()
+    ipc_queue = create_ipc_queue()
     pp = Process(target=process_producer, args=(ipc_queue,))
-    pc = Process(target=process_consumer, args=(ipc_queue,))
+    pc = Process(target=run_consumer, args=(ipc_queue,))
 
     try:
         pp.start()
