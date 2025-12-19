@@ -30,7 +30,7 @@
 
     - name: Pull la dernière image
       community.docker.docker_image:
-        name: ghcr.io/{{ lookup('env', 'GHCR_USER') }}/projet-immo:latest
+        name: ghcr.io/{{ lookup('env', 'GHCR_USER') | lower }}/projet-immo:latest
         source: pull
         force_source: yes  # Force le téléchargement même si l'image existe
 
@@ -43,7 +43,7 @@
     - name: Lancer un nouveau conteneur
       community.docker.docker_container:
         name: grp2-projet-immo
-        image: ghcr.io/{{ lookup('env', 'GHCR_USER') }}/projet-immo:latest
+        image: ghcr.io/{{ lookup('env', 'GHCR_USER') | lower }}/projet-immo:latest
         ports: "5002:8000"
         state: started
         restart_policy: unless-stopped
