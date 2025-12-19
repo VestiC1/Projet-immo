@@ -111,7 +111,7 @@
             "uid": "ef79hckvnilfkc"
           },
           "editorMode": "code",
-          "expr": "sum(http_requests_total{job=\"appli2\", handler!~\"/metrics|/healthcheck|ping\"}) by (handler, method)",
+          "expr": "sum(http_requests_total{job=\"appli2\", handler!~\"/metrics|/healthcheck|none\"}) by (handler, method)",
           "legendFormat": "__auto",
           "range": true,
           "refId": "A"
@@ -289,12 +289,12 @@
     "list": []
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "dashboard-immo-grp2",
   "uid": "adgrrpr",
-  "version": 14
+  "version": 15
 }
